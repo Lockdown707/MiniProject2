@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     public GameObject powerUpIndicator;
     public Vector3 powerUpOffset;
 
+    [Header("Particle Systems")]
+    public ParticleSystem deathParticle;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,6 +79,8 @@ public class PlayerController : MonoBehaviour
         {
             //Add Death annimation here
             animator.SetTrigger("Death");
+            //Death Particle
+            deathParticle.Play();
             //gameManager.UpdateScore(1);
         }
         if (collision.gameObject.CompareTag("Enemy") && hasPowerup)
