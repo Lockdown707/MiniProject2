@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -23,6 +24,11 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
     //GameManager
     public GameManager gameManager;
+    //PowerUp
+    public bool hasPowerup;
+    public float powerupStrength = 15.0f;
+    public GameObject powerUpIndicator;
+    public Vector3 powerUpOffset;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +45,7 @@ public class PlayerController : MonoBehaviour
         forwardInput = Input.GetAxis("Vertical");
         //Move Forward on vertical axis
         transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
+        animator.SetFloat("verticalInput", forwardInput);
         //Turning on horizontal axis
         transform.Rotate(Vector3.up, turnSpeed * horizontalInput * Time.deltaTime);
         //Shooting
@@ -55,6 +62,8 @@ public class PlayerController : MonoBehaviour
 
             animator.SetBool("isOnGround", isOnGround);
         }
+        //PowerUp
+        powerUpIndicator.transform.position = powerUpOffset;
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -66,8 +75,30 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             //Add Death annimation here
-            Destroy(gameObject);
+            animator.SetTrigger("Death");
             //gameManager.UpdateScore(1);
         }
+        if (collision.gameObject.CompareTag("Enemy") && hasPowerup)
+        {
+            Rigidbody enemyRigidbody = collision.gameObject.GetComponent<Rigidbody>();
+            Vector3 awayFromPlayer = (collision.gameObject.transform.position - transform.position);
+            Debug.Log("Collided with" + collision.gameObject.name + "with powerup set to" + hasPowerup);
+        }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Powerup"))
+        {
+            hasPowerup = true;
+            Destroy(other.gameObject);
+            StartCoroutine(PowerupCountdownRoutine());
+            powerUpIndicator.gameObject.SetActive(true);
+        }
     }
+    IEnumerator PowerupCountdownRoutine()
+    {
+        yield return new WaitForSeconds(100);
+        hasPowerup = false;
+        powerUpIndicator.gameObject.SetActive(false);
+    }
+}
