@@ -33,11 +33,16 @@ public class PlayerController : MonoBehaviour
     [Header("Particle Systems")]
     public ParticleSystem deathParticle;
 
+    public SFX sfx;
+    
+    
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -55,6 +60,7 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.E))
         {
             Instantiate(projectile, bulletSpawn.transform.position, bulletSpawn.transform.rotation);
+            sfx.ThrowSound();
         }
         //Jumping
         // Jumping
@@ -77,11 +83,15 @@ public class PlayerController : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            //Death Sound
+            sfx.DeathSound();
             //Add Death annimation here
             animator.SetTrigger("Death");
             //Death Particle
             deathParticle.Play();
-            //gameManager.UpdateScore(1);
+            //Game Over
+            gameManager.GameOver();
+            
         }
         if (collision.gameObject.CompareTag("Enemy") && hasPowerup)
         {
@@ -94,6 +104,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Powerup"))
         {
+            sfx.PowerUpSound();
             hasPowerup = true;
             Destroy(other.gameObject);
             StartCoroutine(PowerupCountdownRoutine());

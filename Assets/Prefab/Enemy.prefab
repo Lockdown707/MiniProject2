@@ -114,7 +114,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!65 &432931511768313961
 BoxCollider:
@@ -142,3 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
+  player: {fileID: 0}
+  lookDirection: {x: 0, y: 0, z: 0}
+  sfx: {fileID: 0}
+  explosionParticle: {fileID: 1133882691009024639, guid: f8e62d360ab0bd14588beb5e3c97810d, type: 3}
